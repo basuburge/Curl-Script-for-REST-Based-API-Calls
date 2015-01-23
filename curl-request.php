@@ -25,16 +25,17 @@
 ***/
 
 
-function getCurlData($method,$data,$url,$headers=array(),$username="",$password=""){
+function CurlRequest($method,$data,$url,$headers=array(),$username="",$password=""){
 	    $curl = curl_init();
-	    
         //In case of authontication needed
         if($username!="")
-            curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
+            curl_setopt($curl, CURLOPT_USERPWD, "$username:$password");
         
-    
 	    switch ($method)
 	    {
+            case "GET":
+			        $url = sprintf("%s?%s", $url, http_build_query($data));
+               break;
 	        case "POST":
 	            if ($data)
 					curl_setopt($curl,CURLOPT_POST, count($data));
@@ -51,12 +52,12 @@ function getCurlData($method,$data,$url,$headers=array(),$username="",$password=
 	
 	    // Optional Authentication:
 		curl_setopt($curl,CURLOPT_COOKIESESSION,true);
-	    curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+        curl_setopt($curl,CURLAUTH_NTLM); 
+	    curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
 	    curl_setopt($curl, CURLOPT_USERPWD, "username:password");
 	
 	    curl_setopt($curl, CURLOPT_URL, $url);
 	    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-	
 	    $result = curl_exec($curl);
 	
 	    curl_close($curl);
